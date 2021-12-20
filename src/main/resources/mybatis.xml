@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+
+<configuration>
+    <!-- 指定properties文件的位置，从类路径的根开始 -->
+    <properties resource="jdbc.properties"/>
+
+
+    <!-- settings:控制mybatis全局行为 -->
+    <settings>
+        <!-- 设置mybatis输出日志 -->
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+    </settings>
+
+    <!-- 定义别名 -->
+    <typeAliases>
+        <!-- 第一种方式定义别名 -->
+        <!--<typeAlias type="com.cyy.entity.Student" alias="stu"></typeAlias>
+        <typeAlias type="com.cyy.vo.ViewStudent" alias="vstu"></typeAlias> -->
+
+        <!-- 第二种方式定义别名
+             package的name写包名，对于这个包中的所有类，类名即是别名
+        -->
+        <!--<package name="com.cyy.entity"/>
+        <package name="com.cyy.vo"/> -->
+
+    </typeAliases>
+
+
+    <!-- PageHelper的插件 -->
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor" />
+    </plugins>
+    <!--
+        环境配置：数据库的连接信息
+        default： 必须和某个environment的id一样，
+                  告诉mybatis使用哪个数据库的连接信息
+    -->
+    <environments default="mydev">
+        <environment id="mydev">
+            <!--
+                transactionManager：mybatis的事务类型
+                      type：事务的处理类型
+                      1）JDBC 表示mybatis底层是调用JDBC中的Connection对象的commit,rollback
+                      2）MANAGED 表示把mybatis的事务处理委托给其他的容器(一个服务器软件，一个框架(Spring))
+
+            -->
+            <transactionManager type="JDBC"/>
+
+            <!--
+                dataSource数据源，java体系中，规定实现了javax.sql.DataSource接口的都是数据源
+                    type="POOLED"数据源的类型是连接池
+                    type="UNPOOLED"表示不使用连接池，那么每次执行sql都需要重新创建
+                    type="JNDI" java命名和目录服务，类似于windows的注册表
+            -->
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+        <environment id="onlie">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/springdb"/>
+                <property name="username" value="root"/>
+                <property name="password" value="123456"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!-- 指定sql mapper文件的位置 -->
+    <mappers>
+        <!--
+            从类路径（target/classes）开始
+            一个mapper标签指定一个文件的位置，100个文件需要写100个标签
+        -->
+        <!-- <mapper resource="com/cyy/dao/StudentDao.xml"/> -->
+
+        <!--
+              使用包名，那么这个包下的所有sql映射文件就都能一次性被找到
+              使用package的要求：
+                                mapper文件名同接口名，
+                                mapper文件和对应接口在同一目录
+        -->
+        <package name="com.cyy.dao"/>
+
+    </mappers>
+</configuration>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.cyy.dao.StudentDao">
+
+    <!-- 定义sql代码片段 -->
+    <sql id="studentSql">
+        select id,name,age,email from student
+    </sql>
+
+
+    <!--
+         if
+         如果第二个条件满足，第一个不满足，语句会变成
+         select id,name,email,age from student where or age > ? 会造成语法错误
+    -->
+    <select id="selectStudentIf" resultType="com.cyy.entity.Student">
+        <include refid="studentSql"></include>
+        where
+        <if test="name != null and name != ''">
+            name = #{name}
+        </if>
+        <if test="age > 0">
+            or age > #{age}
+        </if>
+    </select>
+
+    <!--
+         where
+
+    -->
+    <select id="selectStudentWhere" resultType="com.cyy.entity.Student">
+        <include refid="studentSql"></include>
+        <where>
+            <if test="name != null and name != ''">
+                name = #{name}
+            </if>
+            <if test="age > 0">
+                or age > #{age}
+            </if>
+        </where>
+    </select>
+
+
+    <!--
+         foreach
+    -->
+    <select id="selectForeachOne" resultType="com.cyy.entity.Student">
+        select * from student where id in
+        <foreach collection="list" item="myid" open="(" close=")" separator=",">
+            #{myid}
+        </foreach>
+    </select>
+    <select id="selectForeachTwo" resultType="com.cyy.entity.Student">
+        select * from student where id in
+        <foreach collection="list" item="stu" open="(" close=")" separator=",">
+            #{stu.id}  <!-- 循环的是这个对象某个属性的值 -->
+        </foreach>
+    </select>
+
+    <!-- 分页查询-->
+    <select id="selectAll" resultType="com.cyy.entity.Student">
+        select * from student order by id
+    </select>
+</mapper>
