@@ -6,6 +6,7 @@ public class QueryParam {
     private Integer paramAge;
     private Integer id;
     private String phone;
+    private String address;
 
     public String getParamName() {
         return paramName;
